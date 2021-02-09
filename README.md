@@ -1,9 +1,9 @@
 # paratype
-Assigns genotypes to S. Paratyphi A isolates using their whole-genome data.
+Assigns genotypes to *S.* Paratyphi A isolates using whole-genome sequencing data.
 
 ### Introduction
 This script is a beta version of the paratype tool that assigns genotypes to *Salmonella* Paratyphi A genomes. It is written in *python*.
-The article that will describe the developing strategy of the genotyping scheme is in *Writing in progress* stage. 
+The article that will describe the design of the genotyping scheme will be published soon. 
 
 ### Setup
 #### Dependencies
@@ -20,7 +20,6 @@ Paratype assumes that all dependencies are already installed in the system, at t
 
 #### Input files
 Currently, paratype has three working modes with three different file types: FASTQ, BAM, and VCF. You can use them like this:
-
 ```
 --mode bam --bam $folder\/Sample.bam
 ```
@@ -32,15 +31,13 @@ or,
 ```
 --mode vcf --vcf $folder\/Sample.vcf
 ```
-
-BAM is the default and recommended running mode, so you do not need to use the *--mode* option for this mode. It requires a mapped .bam file, preferably sorted and indexed. However, it is not indexed, *paratype* will index the bam file before using it. 
+BAM is the default and recommended running mode. It requires a mapped .bam file, preferably sorted and indexed. However, if it is not indexed, *paratype* will sort and index the bam file before using it. 
 
 FASTQ mode is the slowest mode and requires two paired-end raw read files. Default file extensions are - *Name_1.fastq.gz & Name_2.fastq.gz*. (Please rename your files to these file extensions, or, you can change the number in line 223 of the *paratpe.py* script. For example, ‘_1.fastq.gz’ has 11 characters, so we used ‘[:-11]’ in line 223 of the script. For ‘_1.fq.gz’ (8 characters), you can use ‘[:-8]’ instead. 
 
 VCF mode is faster than the other modes, but it is not recommended unless you are highly confident about your SNP data. Also, the script requires a VCF file of genome-wide locations, not only the SNP-occurring genomic location. 
 
-Both BAM and VCF files have to be mapped against the *Salmonella* Paratyphi A AKU_12601 reference genome, [FM200053.1](https://www.ncbi.nlm.nih.gov/nuccore/ FM200053.1)). The reference sequence is provided with this script. You need to use the *--ref* option to refers to this reference fasta file. 
-
+Both BAM and VCF files have to be mapped against the *Salmonella* Paratyphi A AKU_12601 reference genome, [FM200053.1](https://www.ncbi.nlm.nih.gov/nuccore/ FM200053.1)). The reference sequence is provided with this script. You need to use the *--ref* option to refer to this reference fasta file. 
 ```
 --ref SParatyphiAKU12601.fasta
 ```
@@ -73,7 +70,7 @@ python paratype.py --mode fastq --fastq Sample_1.fastq.gz Sample_2.fastq.gz --re
 python paratype.py --mode vcf --vcf Sample.vcf --ref SParatyphiAKU12601.fasta --allele SParatyphiA_genotype_specific_alleles_v1_b1.txt --output Sample_paratype.txt
 ```
 
-### Options
+#### Options
 
 ```
 usage: paratype_v1_b1.py [-h] [--mode MODE] [--fastq FASTQ [FASTQ ...]]
@@ -142,4 +139,3 @@ Requires [Bowtie2]( http://bowtie-bio.sourceforge.net/bowtie2/), [SAMtools](http
 --read_cutoff	Minimum proportion of reads required to call a true allele. Default is set to 75% (0.75).
 --output	Specify the location of the output text file. Default is set to *Sample_paratype_results.txt*. The output file format is – (tab-separated) StrainID, Primary_clade, Secondary_clade, Subclade/Genotype, Support.
 ```
-
