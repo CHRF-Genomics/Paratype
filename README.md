@@ -1,9 +1,10 @@
 # paratype
-**Assigns genotypes to _S._ Paratyphi A isolates using whole-genome sequencing data.**
+**Assigns genotypes to _Salmonella_ Paratyphi A isolates using whole-genome sequencing data.**
 
 ### Introduction
-This script is a beta version of the paratype tool that assigns genotypes to *Salmonella* Paratyphi A genomes. It is written in *python*.
-The article that will describe the design of the genotyping scheme will be published soon. 
+This script is a beta version of the paratype tool that assigns genotypes to *Salmonella* Paratyphi A genomes. It is written in *python2.7*.
+The article that will describe the design of the genotyping scheme will be published soon. The script was inspired by genotyphi (https://github.com/katholt/genotyphi), used for typing isolates from the related serovar _Salmonella_ Typhi.
+
 
 ### Dependencies
 Dependencies are listed below (tested versions are in the parentheses)
