@@ -106,7 +106,7 @@ def classify_each_type(type1):
 
 # generate printable results (to use in the designate_genotypes function
 def generate_print_results(final_type, clades):
-	prim, sec, sub = [],[],[]
+	prim, sec, sub, geno = [],[],[], []
 	for i in range(0, len(final_type)):
 		if "Prim" in str(final_type[i]):
 			prim.append(str(clades[i]))
@@ -114,7 +114,22 @@ def generate_print_results(final_type, clades):
 			sec.append(str(clades[i]))
 		if "Sub" in str(final_type[i]):
 			sub.append(str(clades[i]))
-	print_result = '\t'.join([str(','.join(prim)), str(','.join(sec)), str(','.join(sub))])
+		
+	if not prim:	# check if subclade clade is missing
+		prim.append("missing")
+	if not sec:	# check if secondary clade is missing
+		sec.append("missing")
+	if not sub:	# check if subclade is missing
+		sub.append("missing")
+		if not sec:
+			sec.append("missing")
+			geno = prim 
+		else:
+			geno = sec
+	else:
+		geno = sub
+		
+	print_result = '\t'.join([str(','.join(prim)), str(','.join(sec)), str(','.join(sub)), str(','.join(geno))])
 	return print_result
 
 # calculate list mean
@@ -258,15 +273,14 @@ def main():
 			# setup bam file
 			if os.path.exists(bam + '.bai') == False:	# index bam if indexed bam doesn't exist
 				print '\n.bam file is not indexed. Indexing now ...\n'
-				os.system(' '.join(['samtools sort --threads', str(args.threads), bam, '-o', sorted_bam]))
-				os.system(' '.join(['samtools index', sorted_bam]))
+				os.system(' '.join(['samtools index', bam]))
 			else:
 				print '\n.bam file is indexed. Thank you.\n'
-				os.system(' '.join(['samtools sort --threads', str(args.threads), bam, '-o', sorted_bam]))
+				
 			
 			# Run samtools mpileup and bcftools call to generate vcf for a fixed number of loci
 			os.system(' '.join(
-				['samtools mpileup -q', str(args.phrd_cutoff), '-ugBf', args.ref, '-l', str(args.ref_id+'.bed'), sorted_bam, '-I |', 
+				['samtools mpileup -q', str(args.phrd_cutoff), '-ugBf', args.ref, '-l', str(args.ref_id+'.bed'), bam, '-I |', 
 					'bcftools call -c', '-o', vcf_file]))
 			
 			os.system('rm '+sorted_bam+' '+args.ref_id+'.bed')
@@ -293,7 +307,7 @@ def main():
 		final_result, avg_ratio = designate_genotypes(type_list, propor)
 
 		# print results
-		outfile.write('Strain\tPrimary_clade\tSecondary_clade\tGenotype\tSupport\n' + strainID + '\t' + final_result + '\t' + avg_ratio + '\n')
+		outfile.write('Strain\tPrimary_clade\tSecondary_clade\tSubclade\tGenotype\tSupport\n' + strainID + '\t' + final_result + '\t' + avg_ratio + '\n')
 
 	else:
 		print 'Please check if you have provided right allele file and reference fasta.'
@@ -301,4 +315,3 @@ def main():
 # call main function
 if __name__ == '__main__':
 	main()
-
