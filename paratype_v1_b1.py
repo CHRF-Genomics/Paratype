@@ -283,7 +283,7 @@ def main():
 				['samtools mpileup -q', str(args.phrd_cutoff), '-ugBf', args.ref, '-l', str(args.ref_id+'.bed'), bam, '-I |', 
 					'bcftools call -c', '-o', vcf_file]))
 			
-			os.system('rm '+sorted_bam+' '+args.ref_id+'.bed')
+			os.system('rm '+args.ref_id+'.bed')
 	
 		# If mode is set to vcf:
 		elif args.mode=="vcf" and args.vcf:
