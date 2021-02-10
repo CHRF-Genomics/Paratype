@@ -152,5 +152,5 @@ Requires [Bowtie2]( http://bowtie-bio.sourceforge.net/bowtie2/), [SAMtools](http
 --ref_id	  Accession of the Paratyphi A AKU_12601 chromosome reference used for mapping.
 --phrd_cutoff	  Minimum Phred quality score to consider a variant call as a true allele. Default is set to 20.
 --read_cutoff	  Minimum proportion of reads required to call a true allele. Default is set to 75% (0.75).
---output	  Specify the location of the output text file. Default is set to *Sample_paratype_results.txt*. The output file format is – (tab-separated) StrainID, Primary_clade, Secondary_clade, Subclade/Genotype, Support.
+--output	  Specify the location of the output text file. Default is set to *Sample_paratype_results.txt*. The output file format is – (tab-separated) StrainID, Primary_clade, Secondary_clade, Subclade, Genotype, Support.
 ```
