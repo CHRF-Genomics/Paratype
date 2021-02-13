@@ -121,8 +121,7 @@ def generate_print_results(final_type, clades):
 		sec.append("missing")
 	if not sub:	# check if subclade is missing
 		sub.append("missing")
-		if not sec:
-			sec.append("missing")
+		if "missing" in sec:
 			geno = prim 
 		else:
 			geno = sec
