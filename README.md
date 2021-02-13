@@ -2,7 +2,7 @@
 **Assigns genotypes to _Salmonella_ Paratyphi A isolates using whole-genome sequencing data.**
 
 ### Introduction
-This script is a beta version of the paratype tool that assigns genotypes to *Salmonella* Paratyphi A genomes. It is written in *python2.7*.
+This script is a beta version of the **paratype** tool that assigns genotypes to *Salmonella* Paratyphi A genomes. It is written in *python2.7*.
 
 The article that will describe the design of the genotyping scheme will be published soon. Inspiration to write such a script came from [genotyphi](https://github.com/katholt/genotyphi), used for typing isolates from the related serovar _Salmonella_ Typhi.
 
@@ -21,7 +21,7 @@ Python libraries: os, argparse
 
 
 ### Input files
-Currently, paratype has three working modes with three different file types: FASTQ, BAM, and VCF. You can use them like this:
+Currently, **paratype** has three working modes with three different file types: FASTQ, BAM, and VCF. You can use them like this:
 ```
 --mode bam --bam $folder\/Sample.bam
 ```
@@ -33,9 +33,9 @@ or,
 ```
 --mode vcf --vcf $folder\/Sample.vcf
 ```
-**BAM is the default and recommended running mode.** It requires a mapped *.bam* file, sorted and preferably indexed. However, if it is not indexed, *paratype* will index the bam file before using it. 
+**BAM is the default and recommended running mode.** It requires a mapped *.bam* file, sorted and preferably indexed. However, if it is not indexed, **paratype** will index the bam file before using it. 
 
-**FASTQ** mode is the slowest mode and requires two paired-end raw read files. Default file extensions are - *Name_1.fastq.gz & Name_2.fastq.gz*. (Please rename your files to these file extensions, or, you can change the number in line 223 of the *paratpe.py* script. For example, “_1.fastq.gz” has 11 characters, so we used “[:-11]” in line 236 of the script. For “_1.fq.gz” (8 characters), you can use “[:-8]” instead. 
+**FASTQ** mode is the slowest mode and requires two paired-end raw read files. Default file extensions are - *Name_1.fastq.gz & Name_2.fastq.gz*. (Please rename your files to these file extensions, or, you can change the number in line 223 of the *paratpe.py* script. For example, “_1.fastq.gz” has 11 characters, so we used “[:-11]” in line 236 of the script. For “_1.fq.gz” (8 characters), you can use “[:-8]” instead. (**paratype** is tested with illumina short-read fastq files.)
 
 **VCF** mode is faster than the other modes, but it is not recommended unless you are highly confident about your SNP data. Also, the script requires a VCF file of genome-wide locations, not only the SNP-occurring genomic location. 
 
@@ -80,7 +80,7 @@ python paratype.py --mode vcf --vcf Sample.vcf --ref SParatyphiAKU12601.fasta --
 ```
 
 
-### Options
+### Options and details
 
 ```
 usage: paratype_v1_b1.py [-h] [--mode MODE] [--fastq FASTQ [FASTQ ...]]
@@ -125,7 +125,7 @@ optional arguments:
 ```
 
 
-#### Mode specific options
+#### Mode-specific options
 
 ##### --mode bam
 Requires [SAMtools](http://samtools.sourceforge.net/) and [BCFtools](https://samtools.github.io/bcftools/)
