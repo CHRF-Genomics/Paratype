@@ -35,7 +35,7 @@ or,
 ```
 **BAM is the default and recommended running mode.** It requires a mapped *.bam* file, sorted and preferably indexed. However, if it is not indexed, **paratype** will index the bam file before using it. 
 
-**FASTQ** mode is the slowest mode and requires two paired-end raw read files. Default file extensions are - *Name_1.fastq.gz & Name_2.fastq.gz*. (Please rename your files to these file extensions, or, you can change the number in line 223 of the *paratpe.py* script. For example, “_1.fastq.gz” has 11 characters, so we used “[:-11]” in line 236 of the script. For “_1.fq.gz” (8 characters), you can use “[:-8]” instead. (**paratype** is tested with illumina short-read fastq files.)
+**FASTQ** mode is the slowest mode and requires two paired-end raw read files. Default file extensions are - *Name_1.fastq.gz & Name_2.fastq.gz*. (Please rename your files to these file extensions, or, you can change the number in line 223 of the *paratpe.py* script. For example, “_1.fastq.gz” has 11 characters, so we used “[:-11]” in line 235 of the script. For “_1.fq.gz” (8 characters), you can use “[:-8]” instead. (**paratype** is tested with illumina short-read fastq files.)
 
 **VCF** mode is faster than the other modes, but it is not recommended unless you are highly confident about your SNP data. Also, the script requires a VCF file of genome-wide locations, not only the SNP-occurring genomic location. 
 
