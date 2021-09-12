@@ -9,10 +9,10 @@ The article that will describe the design of the genotyping scheme will be publi
 
 ### Dependencies
 Dependencies are listed below *(tested versions are in the parentheses)*
-1. python2.7 (v2.7.18)
+1. python2.7 (_v2.7.18_)
 2. samtools (_v1.10_ & v1.13)
 3. bcftools (_v1.10.2_ & _v1.13_)
-4. bowtie2 (v2.3.5.1) *(required for fastq mode only)*
+4. bowtie2 (_v2.3.5.1_) *(required for fastq mode only)*
 
 Python libraries: os, argparse 
 *(Both libraries should be present by default. If not, install it using "pip install libraryname". Use "sudo pip install libraryname" if you require administrative access for installation.)*
