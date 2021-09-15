@@ -1,6 +1,6 @@
 <p align="center"><img src="Paratype.png" alt="paratype" width="400"></p>
 
-# paratype
+# Paratype
 **Assigns genotypes to _Salmonella_ Paratyphi A isolates using whole-genome sequencing data.**
 
 ### Introduction
