@@ -63,8 +63,8 @@ or,
 ```
 
 
-**The paratype script needs the allele definition and gene region (codon) files** _(provided with the script)_. You do not need to use the option, *--allele*  or, *--gene* to provide the files though, if you download the folder and keep all the files at the directory of paratype script. 
-However, if you found a new genotype or want to detect a new mutation, you can either edit the designated text file for allele definitions (SParatyphiA_genotype_specific_alleles_v1_b1.txt) and gene_regions (SParatyphiA_gene_mutation_codons_v1_b2.txt), or you can prepare files with specifci folmat. In that case, please use following options: 
+**The paratype script needs the allele definition and gene region (codon) files** _(provided with the script)_. You do not need to use the option, *--allele*  or, *--gene* to provide the files, if you download the folder and keep all the files at the directory of paratype script. 
+However, if you found a new genotype or want to detect a new mutation, you can either edit the designated text file for allele definitions (SParatyphiA_genotype_specific_alleles_v1_b1.txt) and gene_regions (SParatyphiA_gene_mutation_codons_v1_b2.txt), or you can prepare files with specific format. In that case, please use following options: 
 ```
 --allele new_alele_definition.txt --gene new_gene_codons_definition.txt
 ```
