@@ -21,7 +21,7 @@ Python libraries: os, argparse
 
 *Note: You may see some warning messages from samtools mpileup (for options - u, g and I). Please ignore those messages.*
 
-**Paratype has been tested with illumina paired-end reads only and it assumes that all dependencies are already installed in the system, at their default location.**
+**Paratype has been tested with illumina paired-end reads only and it assumes that all dependencies are already installed in the system, at their default location. Also, it does not have a _batch_ running mode yet (under development).**
 
 
 ### Input files
@@ -44,7 +44,7 @@ or,
 ```
 **BAM is the default and recommended running mode.** It requires a mapped *.bam* file, sorted and preferably indexed. However, if it is not indexed, **paratype** will index the bam file before using it. 
 
-**FASTQ** mode is the slowest mode and requires two paired-end raw read files. Default file extensions are - *Name_1.fastq.gz & Name_2.fastq.gz*. (Please rename your files to these file extensions, or, you can change the number in line 309 of the *paratpe.py* script. For example, “_1.fastq.gz” has 11 characters, so we used “[:-11]” in line 235 of the script. For “_1.fq.gz” (8 characters), you can use “[:-8]” instead. (**paratype** is tested with illumina short-read fastq files.)
+**FASTQ** mode is the slowest mode and requires two paired-end raw read files. Default file extensions are - *Name_1.fastq.gz & Name_2.fastq.gz*. (Please rename your files to these file extensions, or, you can change the number in line 309 of the *paratpe.py* script. For example, “_1.fastq.gz” has 11 characters, so we used “[:-11]” in line 309 of the script. For “_1.fq.gz” (8 characters), you can use “[:-8]” instead. (**paratype** is tested with illumina short-read fastq files.)
 
 **VCF** mode is faster than the other modes, but it is not recommended unless you are highly confident about your SNP data. Also, the script requires a VCF file of genome-wide locations, not only the SNP-occurring genomic location. 
 
@@ -68,7 +68,7 @@ However, if you found a new genotype or want to detect a new mutation, you can e
 ```
 --allele new_alele_definition.txt --gene new_gene_codons_definition.txt
 ```
-
+However, if you add a new genotype to the provided allele_definition file or, make a new one, please follow the numbered_nomenclature we followed here. For example, you can use N.N.N format (e.g. 2.4.1), but not N.N.TEXT format (e.g. 2.4.Ab). _(Otherwise, the script will show errors)_.
 
 ### Usage
 If the reference accession is exactly **FM200053.1**, the use of **_--ref_id_** is not required. If all provided files with the script are in the same folder, the use of **_--allele_**, **_--gene_** and **_--ref_** options are not required either. Use of **_--output_** is also optional. If not used, a file named _paratype_results.txt_ will be created. 
@@ -76,18 +76,18 @@ If the reference accession is exactly **FM200053.1**, the use of **_--ref_id_** 
 #### Basic Usage – BAM mode (recommended)
 Use of *--mode* is not required.
 ```
-python paratype.py --bam Sample.bam --output Sample_paratype.txt
+python paratype_v1_b2.py --bam Sample.bam --output Sample_paratype.txt
 ```
 
 #### Basic Usage – FASTQ mode
 Use of *--threads* is recommended (default: 1). 
 ```
-python paratype.py --mode fastq --fastq Sample_1.fastq.gz Sample_2.fastq.gz --threads 8 --output Sample_paratype.txt
+python paratype_v1_b2.py --mode fastq --fastq Sample_R1.fastq.gz Sample_R2.fastq.gz --threads 8 --output Sample_paratype.txt
 ```
 
 #### Basic Usage – VCF mode
 ```
-python paratype.py --mode vcf --vcf Sample.vcf --output Sample_paratype.txt
+python paratype_v1_b2.py --mode vcf --vcf Sample.vcf --output Sample_paratype.txt
 ```
 
 
@@ -123,7 +123,7 @@ optional arguments:
                         Minimum proportion of reads required to call a true
                         allele (default: 0.75).
   --threads THREADS     Number of threads to use for Bowtie2 mapping (only for
-                        "fastq" mode.)
+                        "fastq" mode). (default: 1)
   --allele ALLELE       Allele definition in tab-delimited format (default
                         file is provided with the script).
   --genes GENES         File for Gene mutation finding (tab-deleimited format;
