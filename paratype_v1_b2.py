@@ -23,7 +23,7 @@ def parse_args():
 	commands.add_argument('--ref_id', type=str, required=False,	default='FM200053.1', help='Reference sequence id (default: FM200053.1).')
 	commands.add_argument('--phrd_cutoff', type=float, required=False, default=20, help='Minimum phred quality score to consider a variant call as a true allele (default: 20).')
 	commands.add_argument('--read_cutoff', type=float, required=False, default=0.75, help='Minimum proportion of reads required to call a true allele (default: 0.75).')
-	commands.add_argument('--threads', type=int, required=False, default=1, help='Number of threads to use for Bowtie2 mapping (only for "fastq" mode.)')    
+	commands.add_argument('--threads', type=int, required=False, default=1, help='Number of threads to use for Bowtie2 mapping (only for "fastq" mode). (default: 1)')    
 	commands.add_argument('--allele', type=str, required=False,	default='SParatyphiA_genotype_specific_alleles_v1_b1.txt', help='Allele definition in tab-delimited format (default file is provided with the script).')
 	commands.add_argument('--genes', type=str, required=False,	default='SParatyphiA_gene_mutation_codons_v1_b2.txt', help='File for Gene mutation finding (tab-deleimited format; provided with the script).')
 	commands.add_argument('--output', type=str, required=False, default='paratype_results.txt', help='output file.')
