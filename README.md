@@ -76,32 +76,32 @@ If the reference accession is exactly **FM200053.1**, the use of **_--ref_id_** 
 #### Basic Usage – BAM mode (recommended)
 Use of *--mode* is not required.
 ```
-python paratype_v1_b2.py --bam Sample.bam --output Sample_paratype.txt
+python paratype_v1_beta.py --bam Sample.bam --output Sample_paratype.txt
 ```
 
 #### Basic Usage – FASTQ mode
 Use of *--threads* is recommended (default: 1). 
 ```
-python paratype_v1_b2.py --mode fastq --fastq Sample_R1.fastq.gz Sample_R2.fastq.gz --threads 8 --output Sample_paratype.txt
+python paratype_v1_beta.py --mode fastq --fastq Sample_R1.fastq.gz Sample_R2.fastq.gz --threads 8 --output Sample_paratype.txt
 ```
 
 #### Basic Usage – VCF mode
 ```
-python paratype_v1_b2.py --mode vcf --vcf Sample.vcf --output Sample_paratype.txt
+python paratype_v1_beta.py --mode vcf --vcf Sample.vcf --output Sample_paratype.txt
 ```
 
 
 ### Options and details
 
 ```
-usage: paratype_v1_b2.py [-h] [--mode MODE] [--fastq FASTQ [FASTQ ...]]
-                         [--bam BAM] [--vcf VCF] [--ref REF] [--ref_id REF_ID]
-                         [--phrd_cutoff PHRD_CUTOFF]
-                         [--read_cutoff READ_CUTOFF] [--threads THREADS]
-                         [--allele ALLELE] [--genes GENES] [--output OUTPUT]
+usage: paratype_v1_beta.py [-h] [--mode MODE] [--fastq FASTQ [FASTQ ...]]
+                           [--bam BAM] [--vcf VCF] [--ref REF]
+                           [--ref_id REF_ID] [--phrd_cutoff PHRD_CUTOFF]
+                           [--read_cutoff READ_CUTOFF] [--threads THREADS]
+                           [--allele ALLELE] [--genes GENES] [--output OUTPUT]
 
 Genotyping of Salmonella Paratyphi A using fastq or bam or vcf files, against
-AKU_12601 as reference.
+the strain AKU_12601 as reference.
 
 optional arguments:
   -h, --help            show this help message and exit
