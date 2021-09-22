@@ -14,7 +14,7 @@ from Bio.Seq import Seq
 
 def parse_args():
 	"Parse the input arguments, use '-h' for help"
-	commands = ArgumentParser(description='Genotyping of Salmonella Paratyphi A using fastq or bam or vcf files, against AKU_12601 as reference.')
+	commands = ArgumentParser(description='Genotyping of Salmonella Paratyphi A using fastq or bam or vcf files, against the strain AKU_12601 as reference.')
 	commands.add_argument('--mode', required=False, default='bam', help='Mode to run in based on input files (fastq or, bam or, vcf)')
 	commands.add_argument('--fastq', nargs='+', required=False, help='Raw fastq read files (paired-end).')
 	commands.add_argument('--bam', type=str, required=False,	help='Mapped BAM file against the AKU_12601 reference genome.')
