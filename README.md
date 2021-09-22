@@ -171,3 +171,8 @@ Requires [Bowtie2]( http://bowtie-bio.sourceforge.net/bowtie2/), [SAMtools](http
 --ref       Fasta Reference sequence of Paratyphi AKU_12601 used for mapping (provided with the script).
 --ref_id    Fasta ID of the reference sequence. Default is FM200053.1.
 ```
+
+### Citation
+This is the beta version of the paratype tool. The article that will describe the scheme is coming soon. 
+Meanwhile, please cite using the following DOI: 
+doi.org/10.5281/zenodo.5520408
