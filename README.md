@@ -4,20 +4,21 @@
 **Assigns genotypes to _Salmonella_ Paratyphi A isolates using whole-genome sequencing data.**
 
 ### Introduction
-This script is a beta version of the **paratype** tool that assigns genotypes to *Salmonella* Paratyphi A genomes. It is written in *python2.7*. In addition, **paratype** detects mutations in the quinolone resistance-determining regions (_gyrA_-83, _gyrA_-87, _parC_-80, _parC_-84) responsible for resistance to ciprofloxacin and _acrB_ gene (_acrB_-717) which can cause azithromycin resistance in _Salmonella_ Typhi and Paratyphi ([Hooda Y et al. 2019](https://doi.org/10.1371/journal.pntd.0007868), [Sajib MSI et al. 2021](https://doi.org/10.1128/mBio.03481-20)).
+This script is a beta version of the **paratype** tool that assigns genotypes to *Salmonella* Paratyphi A genomes. It is written in **python3** (a version written in python2.7 is also given here, in a folder). **Paratype** also detects mutations in the quinolone resistance-determining regions (_gyrA_-83, _gyrA_-87, _parC_-80, _parC_-84) responsible for resistance to ciprofloxacin and _acrB_ gene (_acrB_-717) which can cause azithromycin resistance in _Salmonella_ Typhi and Paratyphi ([Hooda Y et al. 2019](https://doi.org/10.1371/journal.pntd.0007868), [Sajib MSI et al. 2021](https://doi.org/10.1128/mBio.03481-20)).
 
 The article that will describe the design of the genotyping scheme will be published soon. Inspiration to write such a script came from [genotyphi](https://github.com/katholt/genotyphi), used for typing isolates from the related serovar _Salmonella_ Typhi.
 
 
 ### Dependencies
 Dependencies are listed below *(tested versions are in the parentheses)*
-1. python2.7 (_v2.7.18_)
-2. samtools (_v1.10_ & v1.13)
-3. bcftools (_v1.10.2_ & _v1.13_)
-4. bowtie2 (_v2.3.5.1_) *(required for fastq mode only)*
+1. python2.7 (_v2.7.18_) or python3 (_v3.8.10_)
+2. biopython (_v1.76_ in python2.7 and _v1.79_ in python3)
+3. samtools (_v1.10_ & v1.13)
+4. bcftools (_v1.10.2_ & _v1.13_)
+5. bowtie2 (_v2.3.5.1_) *(required for fastq mode only)*
 
-Python libraries: os, argparse 
-*(Both libraries should be present by default. If not, install it using "pip install libraryname". Use "sudo pip install libraryname" if you require administrative access for installation.)*
+**Python modules:** os, argparse 
+*(Both modules should be present by default. If not, install it using "pip install modulename". Use "sudo pip install modulename" if you require administrative access for installation.)*
 
 *Note: You may see some warning messages from samtools mpileup (for options - u, g and I). Please ignore those messages.*
 
@@ -44,7 +45,7 @@ or,
 ```
 **BAM is the default and recommended running mode.** It requires a mapped *.bam* file, sorted and preferably indexed. However, if it is not indexed, **paratype** will index the bam file before using it. 
 
-**FASTQ** mode is the slowest mode and requires two paired-end raw read files. Default file extensions are - *Name_1.fastq.gz & Name_2.fastq.gz*. (Please rename your files to these file extensions, or, you can change the number in line 309 of the *paratype_v1_beta.py* script. For example, “_1.fastq.gz” has 11 characters, so we used “[:-11]” in line 309 of the script. For “_1.fq.gz” (8 characters), you can use “[:-8]” instead. (**paratype** is tested with illumina short-read fastq files.)
+**FASTQ** mode is the slowest mode and requires two paired-end raw read files. Default file extensions are - *Name_1.fastq.gz & Name_2.fastq.gz*. (Please rename your files to these file extensions, or, you can change the number in line 309 of the *paratype_v1_beta2.py* script. For example, “_1.fastq.gz” has 11 characters, so we used “[:-11]” in line 309 of the script. For “_1.fq.gz” (8 characters), you can use “[:-8]” instead. (**paratype** is tested with illumina short-read fastq files.)
 
 **VCF** mode is faster than the other modes, but it is not recommended unless you are highly confident about your SNP data. Also, the script requires a VCF file of genome-wide locations, not only the SNP-occurring genomic location. 
 
@@ -71,30 +72,32 @@ However, if you found a new genotype or want to detect a new mutation, you can e
 However, if you add a new genotype to the provided allele_definition file or, make a new one, please follow the numbered_nomenclature we followed here. For example, you can use N.N.N format (e.g. 2.4.1), but not N.N.TEXT format (e.g. 2.4.Ab). _(Otherwise, the script will show errors)_.
 
 ### Usage
-If the reference accession is exactly **FM200053.1**, the use of **_--ref_id_** is not required. If all provided files with the script are in the same folder, the use of **_--allele_**, **_--gene_** and **_--ref_** options are not required either. Use of **_--output_** is also optional. If not used, a file named _paratype_results.txt_ will be created. 
+Paratype assumes that **python3** is the default **_python_** in your system. If it is not, you should use _python3_ instead of _python_ in the following commands.
+
+If the reference accession is exactly **FM200053.1**, the use of **_--ref_id_** is not required. If all provided files with the script are in the same folder, the use of **_--allele_**, **_--gene_** and **_--ref_** options are not required either. Use of **_--output_** is also optional. If not used, a file named _paratype_results.txt_ will be generated. 
 
 #### Basic Usage – BAM mode (recommended)
 Use of *--mode* is not required.
 ```
-python paratype_v1_beta.py --bam Sample.bam --output Sample_paratype.txt
+python paratype_v1_beta2.py --bam Sample.bam --output Sample_paratype.txt
 ```
 
 #### Basic Usage – FASTQ mode
 Use of *--threads* is recommended (default: 1). 
 ```
-python paratype_v1_beta.py --mode fastq --fastq Sample_R1.fastq.gz Sample_R2.fastq.gz --threads 8 --output Sample_paratype.txt
+python paratype_v1_beta2.py --mode fastq --fastq Sample_R1.fastq.gz Sample_R2.fastq.gz --threads 8 --output Sample_paratype.txt
 ```
 
 #### Basic Usage – VCF mode
 ```
-python paratype_v1_beta.py --mode vcf --vcf Sample.vcf --output Sample_paratype.txt
+python paratype_v1_beta2.py --mode vcf --vcf Sample.vcf --output Sample_paratype.txt
 ```
 
 
 ### Options and details
 
 ```
-usage: paratype_v1_beta.py [-h] [--mode MODE] [--fastq FASTQ [FASTQ ...]]
+usage: paratype_v1_beta2.py [-h] [--mode MODE] [--fastq FASTQ [FASTQ ...]]
                            [--bam BAM] [--vcf VCF] [--ref REF]
                            [--ref_id REF_ID] [--phrd_cutoff PHRD_CUTOFF]
                            [--read_cutoff READ_CUTOFF] [--threads THREADS]
