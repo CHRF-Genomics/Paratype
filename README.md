@@ -6,7 +6,7 @@
 ### Introduction
 This script is a beta version of the **paratype** tool that assigns genotypes to *Salmonella* Paratyphi A genomes. It is written in **python3** (a version written in python2.7 is also given here, in a folder). **Paratype** also detects mutations in the quinolone resistance-determining regions (_gyrA_-83, _gyrA_-87, _parC_-80, _parC_-84) responsible for resistance to ciprofloxacin and _acrB_ gene (_acrB_-717) which can cause azithromycin resistance in _Salmonella_ Typhi and Paratyphi ([Hooda Y et al. 2019](https://doi.org/10.1371/journal.pntd.0007868), [Sajib MSI et al. 2021](https://doi.org/10.1128/mBio.03481-20)).
 
-The article that will describe the design of the genotyping scheme will be published soon. Inspiration to write such a script came from [genotyphi](https://github.com/katholt/genotyphi), used for typing isolates from the related serovar _Salmonella_ Typhi.
+[Tanmoy AM et al.](https://doi.org/10.1101/2021.11.13.21266165) _(on medRxiv)_ described the design of the **paratype** genotyping scheme. Inspiration to design such a scheme came from [genotyphi](https://github.com/katholt/genotyphi), used for typing isolates of a related serovar, _Salmonella_ Typhi.
 
 
 ### Dependencies
@@ -177,5 +177,6 @@ Requires [Bowtie2]( http://bowtie-bio.sourceforge.net/bowtie2/), [SAMtools](http
 
 
 ### Citation
-This is the _beta version_ of the **paratype** tool. The article that will describe the genotyping scheme is coming soon. 
-Meanwhile, please cite using this [DOI](https://doi.org/10.5281/zenodo.5520408). 
+This is the _beta version_ of the **paratype** tool.
+
+Please cite the preprint version of the **paratype** article ([Tanmoy AM et al.](https://doi.org/10.1101/2021.11.13.21266165)) if you use this tool or the scheme. 
