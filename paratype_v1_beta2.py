@@ -347,7 +347,7 @@ def main():
             os.system(' '.join(['bowtie2-build', ref_fasta_file, ref_index]))
 
             # set up sam, bam, vcf files
-            # assuming the extension of reference file is 'fastq.gz', not 'fq.gz'. If it is 'fq.gz', change the number -11 to -8.
+            # assuming the extension of fastq files are 'fastq.gz', not 'fq.gz'. If it is 'fq.gz', change the number -11 to -8.
             sam = '.'.join([(fastq1[:-11]), 'sam'])
             bam = '.'.join([(sam[:-4]), 'bam'])
             sorted_bam = '.'.join([(bam[:-4]), 'sorted.bam'])
