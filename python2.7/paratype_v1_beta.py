@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 '''
 This script assigns genotypes to Salmonella Paratyphi A isolates using whole-genome sequencing data.
-It uses FASTQ or BAM (recommended) or VCF (if highly trusted SNP data) files relative to Paratayphi A AKU_12601 (FM200053.1). Also, it reads allele definitions of the genotypes from a text file (given with this script).
+It uses FASTQ or BAM (recommended) or VCF (if highly trusted SNP data) files relative to Paratyphi A AKU_12601 (FM200053.1). Also, it reads allele definitions of the genotypes from a text file (given with this script).
 
 Authors: Arif Mohammad Tanmoy (arif.tanmoy@chrfbd.org) wrote the script. He and Yogesh Hooda (yhooda@chrfbd.org) defined the genotype-specific alleles.
 
@@ -306,7 +306,7 @@ def main():
 			os.system(' '.join(['bowtie2-build', ref_fasta_file, ref_index]))
 
 			# set up sam, bam, vcf files
-			sam = '.'.join([(fastq1[:-11]), 'sam'])		# assuming the extension of reference file is 'fastq.gz', not 'fq.gz'. If it is 'fq.gz', change the number -11 to -8.
+			sam = '.'.join([(fastq1[:-11]), 'sam'])		# assuming the extension of fastq files are 'fastq.gz', not 'fq.gz'. If it is 'fq.gz', change the number -11 to -8.
 			bam = '.'.join([(sam[:-4]), 'bam'])
 			sorted_bam = '.'.join([(bam[:-4]), 'sorted.bam'])
 			vcf_file = '.'.join([(bam[:-4]), 'vcf'])
