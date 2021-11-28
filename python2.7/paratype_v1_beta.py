@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 '''
 This script assigns genotypes to Salmonella Paratyphi A isolates using whole-genome sequencing data.
-It uses FASTQ or BAM (recommended) or VCF (if highly trusted SNP data) files relative to Paratyphi A AKU_12601 (FM200053.1). Also, it reads allele definitions of the genotypes from a text file (given with this script).
+It uses FASTQ or BAM (recommended) or VCF (if highly trusted SNP data) files relative to Paratyphi A AKU_12601 (NC_011147.1). Also, it reads allele definitions of the genotypes from a text file (given with this script).
 
 Authors: Arif Mohammad Tanmoy (arif.tanmoy@chrfbd.org) wrote the script. He and Yogesh Hooda (yhooda@chrfbd.org) defined the genotype-specific alleles.
 
@@ -20,7 +20,7 @@ def parse_args():
 	commands.add_argument('--bam', type=str, required=False,	help='Mapped BAM file against the AKU_12601 reference genome.')
 	commands.add_argument('--vcf', type=str, required=False,	help='Mapped VCF file against the AKU_12601 reference genome.')
 	commands.add_argument('--ref', type=str, required=False, default='SParatyphiAKU12601.fasta', help='Fasta Reference sequence of AKU_12601 (default file is provided with the script)')
-	commands.add_argument('--ref_id', type=str, required=False,	default='FM200053.1', help='Reference sequence id (default: FM200053.1).')
+	commands.add_argument('--ref_id', type=str, required=False,	default='NC_011147.1', help='Reference sequence id (default: NC_011147.1).')
 	commands.add_argument('--phrd_cutoff', type=float, required=False, default=20, help='Minimum phred quality score to consider a variant call as a true allele (default: 20).')
 	commands.add_argument('--read_cutoff', type=float, required=False, default=0.75, help='Minimum proportion of reads required to call a true allele (default: 0.75).')
 	commands.add_argument('--threads', type=int, required=False, default=1, help='Number of threads to use for Bowtie2 mapping (only for "fastq" mode). (default: 1)')    
