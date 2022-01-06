@@ -5,11 +5,11 @@ It uses FASTQ or BAM (recommended) or VCF (if highly trusted SNP data) files rel
 
 Authors: Arif Mohammad Tanmoy (arif.tanmoy@chrfbd.org) wrote the script. He and Yogesh Hooda (yhooda@chrfbd.org) defined the genotype-specific alleles.
 
-Last modified - 03 October, 2021
-Version - v1_beta_3
+Last modified - 2nd January, 2022
+Version: v1_beta_3
 '''
 import os
-from argparse import (ArgumentParser, FileType)
+from argparse import ArgumentParser
 from Bio.Seq import Seq
 
 
@@ -35,10 +35,10 @@ def parse_args():
                           help='Minimum proportion of reads required to call a true allele (default: 0.75).')
     commands.add_argument('--threads', type=int, required=False, default=1,
                           help='Number of threads to use for Bowtie2 mapping (only for "fastq" mode). (default: 1)')
-    commands.add_argument('--allele', type=str, required=False,	default='SParatyphiA_genotype_specific_alleles_v1_b1.txt',
+    commands.add_argument('--allele', type=str, required=False,	default='SParatyphiA_genotype_specific_alleles.txt',
                           help='Allele definition in tab-delimited format (default file is provided with the script).')
-    commands.add_argument('--genes', type=str, required=False,	default='SParatyphiA_gene_mutation_codons_v1_b2.txt',
-                          help='File for Gene mutation finding (tab-deleimited format; provided with the script).')
+    commands.add_argument('--genes', type=str, required=False,	default='SParatyphiA_gene_mutation_codons.txt',
+                          help='List of codons to find targeted gene mutation (tab-delimited format; default file is provided with the script).')
     commands.add_argument('--output', type=str, required=False,
                           default='paratype_results.txt', help='output file.')
     return commands.parse_args()
@@ -61,10 +61,10 @@ def define_files(path, filename, argss):
 parapath = os.path.dirname(os.path.realpath(__file__))
 
 genotype_allele_file = define_files(
-    parapath, "SParatyphiA_genotype_specific_alleles_v1_b1.txt", args.allele)
+    parapath, "SParatyphiA_genotype_specific_alleles.txt", args.allele)
 ref_fasta_file = define_files(parapath, "SParatyphiAKU12601.fasta", args.ref)
 gene_regions_file = define_files(
-    parapath, "SParatyphiA_gene_mutation_regions_v1_b1.txt", args.genes)
+    parapath, "SParatyphiA_gene_mutation_codons.txt", args.genes)
 
 # Define genotypes
 
@@ -265,33 +265,33 @@ def generate_strain_id(string):
 # Define mutation position
 
 def define_genes(gene_file):
-    mutation, strand, start, end, codon, base, codon_pos = (
+    mutation, strand, location, codon, base, codon_pos, region = (
         [] for l in range(7))
     for line in open(gene_file, 'r'):
         if not line.startswith('#'):
             rec = line.strip('\n').split('\t')
             mutation.append(rec[0])
             strand.append(rec[1])
-            start.append(rec[2])
-            end.append(int(rec[3]))
-            codon.append(rec[4])
-            base.append(rec[5])
-            codon_pos.append(int(rec[6]))
+            location.append(int(rec[2]))
+            #end.append(int(rec[2]))
+            codon.append(rec[3])
+            base.append(rec[4])
+            codon_pos.append(int(rec[5]))
     temp_bed = open((args.ref_id+'.bed'), 'a')
-    for x in range(0, len(start)):
+    for x in range(0, len(location)):
         temp_bed.write(
-            args.ref_id + '\t' + str(start[x]) + '\t' + str(end[x]) + '\n')
+            args.ref_id + '\t' + str(location[x] - 1) + '\t' + str(location[x]) + '\n')
     temp_bed.close()
-    return mutation, strand, start, end, codon, base, codon_pos
+    return mutation, strand, location, codon, base, codon_pos, region
 
 # check vcf for high-quality SNP for mutations
 
-def select_snp_from_vcf(vcf_file, end):
+def select_snp_from_vcf(vcf_file, location):
     snp_pos, snp_alt = [], []
     for line in open(vcf_file, 'r'):
         if not line.startswith('#'):
             CHROM, POS, ID, REF, ALT, QUAL, FILTER, INFO, FORMAT, FILE = line.rstrip().split()
-            if (int(POS) in end) and (float(QUAL) > args.phrd_cutoff) and (ALT != "") and (len(ALT) == 1):
+            if (int(POS) in location) and (float(QUAL) > args.phrd_cutoff) and (ALT != "") and (len(ALT) == 1):
                 read_ratio = calculate_read_proportion(INFO, FORMAT)
                 if read_ratio > args.read_cutoff:
                     snp_pos.append(POS)
@@ -300,21 +300,24 @@ def select_snp_from_vcf(vcf_file, end):
 
 # Detect mutations
 
-def classify_mutations(snp_pos, snp_alt, mutation, strand, end, codon, codon_pos):
+def classify_mutations(snp_pos, snp_alt, mutation, strand, location, codon, codon_pos):
     final_mut_list = []
     for i in range(0, len(snp_pos)):
-        j = end.index(int(snp_pos[i]))
-        triplet = []
-        triplet[:0] = codon[j]
-        triplet[(codon_pos[j]-1)] = snp_alt[i]
-        alt_triplet = ''.join(triplet)
-        if strand[j] == 'for':
-            alt_amino = str(Seq(alt_triplet).translate(
-                table='11', stop_symbol='*'))
-        else:
-            alt_amino = str(Seq(alt_triplet).reverse_complement(
-            ).translate(table='11', stop_symbol='*'))
-        final_mut_list.append(mutation[j] + alt_amino)
+        try:
+            j = location.index(int(snp_pos[i]))
+            triplet = []
+            triplet[:0] = codon[j]
+            triplet[(codon_pos[j]-1)] = snp_alt[i]
+            alt_triplet = ''.join(triplet)
+            if strand[j] == 'for':
+                alt_amino = str(Seq(alt_triplet).translate(
+                    table='11', stop_symbol='*'))
+            else:
+                alt_amino = str(Seq(alt_triplet).reverse_complement(
+                ).translate(table='11', stop_symbol='*'))
+            final_mut_list.append(mutation[j] + alt_amino)
+        except ValueError:
+            pass
     if len(final_mut_list) == 0:
         final_mut_list.append('No_mutation')
     return final_mut_list
@@ -333,7 +336,7 @@ def main():
         clades, loci, alleles = define_genotypes(genotype_allele_file)
 
         # setup gene region list
-        mutation, strand, start, end, codon, base, codon_pos = define_genes(
+        mutation, strand, location, codon, base, codon_pos, region = define_genes(
             gene_regions_file)
 
         # If mode is set to fastq:
@@ -425,11 +428,11 @@ def main():
         final_result, avg_ratio = designate_genotypes(type_list, propor)
 
         # Detect position-specific high-quality SNPs for mutations
-        snp, nucl = select_snp_from_vcf(vcf_file, end)
+        snp, nucl = select_snp_from_vcf(vcf_file, location)
 
         # Classify Mutations
         mutation_list = classify_mutations(
-            snp, nucl, mutation, strand, end, codon, codon_pos)
+            snp, nucl, mutation, strand, location, codon, codon_pos)
         print_mutations = ','.join(mutation_list)
         print(strainID + '\t' + str(type_list) + '\t' + print_mutations)
 

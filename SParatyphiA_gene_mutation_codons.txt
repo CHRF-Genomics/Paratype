@@ -1,0 +1,40 @@
+# List of gene-specific codons of the S. Paratyphi A AKU12601 genome, to find targeted mutations. 						
+#
+# Authors - Arif Mohammad Tanmoy (arif.tanmoy@chrfbd.org) and Yogesh Hooda (yhooda@chrfbd.org)						
+#
+# Last modified - January 2, 2022
+#
+#position	strand	location	codon(wt)(for)	basepair	pos_in_codon	region
+gyrA-S83	for	669201	TCC	T	1	QRDR
+gyrA-S83	for	669202	TCC	C	2	QRDR
+gyrA-S83	for	669203	TCC	C	3	QRDR
+gyrA-D87	for	669213	GAC	G	1	QRDR
+gyrA-D87	for	669214	GAC	A	2	QRDR
+gyrA-D87	for	669215	GAC	C	3	QRDR
+parC-S80	rev	3145220	GCT	G	1	QRDR
+parC-S80	rev	3145221	GCT	C	2	QRDR
+parC-S80	rev	3145222	GCT	T	3	QRDR
+parC-E84	rev	3145232	TTC	T	1	QRDR
+parC-E84	rev	3145233	TTC	T	2	QRDR
+parC-E84	rev	3145234	TTC	C	3	QRDR
+acrB-R717	for	2338395	CGA	C	1	Azm
+acrB-R717	for	2338396	CGA	G	2	Azm
+acrB-R717	for	2338397	CGA	A	3	Azm
+rmlB-H176	for	860533	CAT	C	1	O2
+rmlB-H176	for	860534	CAT	A	2	O2
+rmlB-H176	for	860535	CAT	T	3	O2
+rmlD-G262	for	861876	GGT	G	1	O2
+rmlD-G262	for	861877	GGT	G	2	O2
+rmlD-G262	for	861878	GGT	T	3	O2
+rmlC-E157	for	863387	GAA	G	1	O2
+rmlC-E157	for	863388	GAA	A	2	O2
+rmlC-E157	for	863389	GAA	A	3	O2
+ddhB-R348	for	866285	CGT	C	1	O2
+ddhB-R348	for	866286	CGT	G	2	O2
+ddhB-R348	for	866287	CGT	T	3	O2
+prt-C249	for	868443	TGT	T	1	O2
+prt-C249	for	868444	TGT	G	3	O2
+prt-C249	for	868445	TGT	T	3	O2
+wzx-G329	for	870605	GGT	G	1	O2
+wzx-G329	for	870606	GGT	G	2	O2
+wzx-G329	for	870607	GGT	T	3	O2

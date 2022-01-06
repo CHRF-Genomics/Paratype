@@ -4,9 +4,9 @@
 **Assigns genotypes to _Salmonella_ Paratyphi A isolates using whole-genome sequencing data.**
 
 ### Introduction
-This script is a beta version of the **paratype** tool that assigns genotypes to *Salmonella* Paratyphi A genomes. It is written in **python3** (a version written in python2.7 is also given here, in a folder). **Paratype** also detects mutations in the quinolone resistance-determining regions (_gyrA_-83, _gyrA_-87, _parC_-80, _parC_-84) responsible for resistance to ciprofloxacin and _acrB_ gene (_acrB_-717) which can cause azithromycin resistance in _Salmonella_ Typhi and Paratyphi ([Hooda Y et al. 2019](https://doi.org/10.1371/journal.pntd.0007868), [Sajib MSI et al. 2021](https://doi.org/10.1128/mBio.03481-20)).
+This script is a beta version of the **paratype** tool that assigns genotypes to *Salmonella* Paratyphi A genomes. It is written in _**python3**_. **Paratype** also detects mutations in the quinolone resistance-determining regions (_gyrA_-83, _gyrA_-87, _parC_-80, _parC_-84) responsible for resistance to ciprofloxacin and _acrB_ gene (_acrB_-717) which can cause azithromycin resistance in _Salmonella_ Typhi and Paratyphi ([Hooda Y et al. 2019](https://doi.org/10.1371/journal.pntd.0007868), [Sajib MSI et al. 2021](https://doi.org/10.1128/mBio.03481-20)).
 
-[Tanmoy AM et al.](https://doi.org/10.1101/2021.11.13.21266165) _(on medRxiv)_ described the design of the **paratype** genotyping scheme. Inspiration to design such a scheme came from [genotyphi](https://github.com/katholt/genotyphi), used for typing isolates of a related serovar, _Salmonella_ Typhi.
+[Tanmoy AM et al.](https://doi.org/10.1101/2021.11.13.21266165) _(on medRxiv)_ described the design of the **paratype** genotyping scheme. Inspiration to design such a scheme came from [genotyphi](https://github.com/katholt/genotyphi), a tool that has been used for genotyping of a related serovar, _Salmonella_ Typhi.
 
 
 ### Dependencies
@@ -79,58 +79,45 @@ If the reference accession is exactly **NC_011147.1**, the use of **_--ref_id_**
 #### Basic Usage – BAM mode (recommended)
 Use of *--mode* is not required.
 ```
-python paratype_v1_beta2.py --bam Sample.bam --output Sample_paratype.txt
+python paratype.py --bam Sample.bam --output Sample_paratype.txt
 ```
 
 #### Basic Usage – FASTQ mode
 Use of *--threads* is recommended (default: 1). 
 ```
-python paratype_v1_beta2.py --mode fastq --fastq Sample_R1.fastq.gz Sample_R2.fastq.gz --threads 8 --output Sample_paratype.txt
+python paratype.py --mode fastq --fastq Sample_R1.fastq.gz Sample_R2.fastq.gz --threads 8 --output Sample_paratype.txt
 ```
 
 #### Basic Usage – VCF mode
 ```
-python paratype_v1_beta2.py --mode vcf --vcf Sample.vcf --output Sample_paratype.txt
+python paratype.py --mode vcf --vcf Sample.vcf --output Sample_paratype.txt
 ```
 
 
 ### Options and details
 
 ```
-usage: paratype_v1_beta2.py [-h] [--mode MODE] [--fastq FASTQ [FASTQ ...]]
-                           [--bam BAM] [--vcf VCF] [--ref REF]
-                           [--ref_id REF_ID] [--phrd_cutoff PHRD_CUTOFF]
-                           [--read_cutoff READ_CUTOFF] [--threads THREADS]
-                           [--allele ALLELE] [--genes GENES] [--output OUTPUT]
+usage: paratype.py [-h] [--mode MODE] [--fastq FASTQ [FASTQ ...]] [--bam BAM] [--vcf VCF] [--ref REF] [--ref_id REF_ID] [--phrd_cutoff PHRD_CUTOFF] [--read_cutoff READ_CUTOFF]
+                            [--threads THREADS] [--allele ALLELE] [--genes GENES] [--output OUTPUT]
 
-Genotyping of Salmonella Paratyphi A using fastq or bam or vcf files, against
-the strain AKU_12601 as reference.
+Genotyping of Salmonella Paratyphi A using fastq or bam or vcf files, against the strain AKU_12601 as reference.
 
 optional arguments:
   -h, --help            show this help message and exit
-  --mode MODE           Mode to run in based on input files (fastq or, bam or,
-                        vcf)
+  --mode MODE           Mode to run in based on input files (fastq or, bam or, vcf)
   --fastq FASTQ [FASTQ ...]
                         Raw fastq read files (paired-end).
-  --bam BAM             Mapped BAM file against the AKU_12601 reference
-                        genome.
-  --vcf VCF             Mapped VCF file against the AKU_12601 reference
-                        genome.
-  --ref REF             Fasta Reference sequence of AKU_12601 (default file is
-                        provided with the script)
+  --bam BAM             Mapped BAM file against the AKU_12601 reference genome.
+  --vcf VCF             Mapped VCF file against the AKU_12601 reference genome.
+  --ref REF             Fasta Reference sequence of AKU_12601 (default file is provided with the script)
   --ref_id REF_ID       Reference sequence id (default: NC_011147.1).
   --phrd_cutoff PHRD_CUTOFF
-                        Minimum phred quality score to consider a variant call
-                        as a true allele (default: 20).
+                        Minimum phred quality score to consider a variant call as a true allele (default: 20).
   --read_cutoff READ_CUTOFF
-                        Minimum proportion of reads required to call a true
-                        allele (default: 0.75).
-  --threads THREADS     Number of threads to use for Bowtie2 mapping (only for
-                        "fastq" mode). (default: 1)
-  --allele ALLELE       Allele definition in tab-delimited format (default
-                        file is provided with the script).
-  --genes GENES         File for Gene mutation finding (tab-deleimited format;
-                        provided with the script).
+                        Minimum proportion of reads required to call a true allele (default: 0.75).
+  --threads THREADS     Number of threads to use for Bowtie2 mapping (only for "fastq" mode). (default: 1)
+  --allele ALLELE       Allele definition in tab-delimited format (default file is provided with the script).
+  --genes GENES         List of codons to find targeted gene mutation (tab-delimited format; default file is provided with the script).
   --output OUTPUT       output file.
 
 ```
@@ -170,9 +157,9 @@ Requires [Bowtie2]( http://bowtie-bio.sourceforge.net/bowtie2/), [SAMtools](http
 --read_cutoff Minimum proportion of reads required to call a true allele. Default is set to 75% (0.75).
 --output      Specify the location of the output text file. Default is set to *Sample_paratype_results.txt*. The output file format is – (tab-separated) StrainID, Primary_clade, Secondary_clade, Subclade, Genotype, Support.
 --allele      Allele definition file in tab-delimited format (provided with the script). If you think you found a new genotype, you can add its unique allele location, nucleotide, locus_tag, and the new genotype designation in this file. You can then run the paratype script with that file to know the accuracy of your findings.  
---gene      Gene mutation file with codon location and nucleotide details in tab-delimited format. 
---ref       Fasta Reference sequence of Paratyphi AKU_12601 used for mapping (provided with the script).
---ref_id    Fasta ID of the reference sequence. Default is NC_011147.1.
+--gene        Gene mutation file with codon location and nucleotide details in tab-delimited format. 
+--ref         Fasta Reference sequence of Paratyphi AKU_12601 used for mapping (provided with the script).
+--ref_id      Fasta ID of the reference sequence. Default is NC_011147.1.
 ```
 
 
@@ -180,3 +167,7 @@ Requires [Bowtie2]( http://bowtie-bio.sourceforge.net/bowtie2/), [SAMtools](http
 This is the _beta version_ of the **paratype** tool.
 
 Please cite the preprint version of the **paratype** article ([Tanmoy AM et al.](https://doi.org/10.1101/2021.11.13.21266165)) if you use this tool or the scheme. 
+
+
+### Python 2.7 version
+Paratype will no longer be maintained on python2.7. Please download the original codes (release: *Original paratype codes, v1_beta*), if you have no other options than working with python2.7. 
