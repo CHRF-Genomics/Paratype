@@ -1,4 +1,4 @@
-# List of clade-specific alleles relative to the S. Paratyphi A AKU12601 genome 
+# List of clade-specific alleles relative to the Salmonella Paratyphi A AKU12601 genome
 #
 # Authors - Arif Mohammad Tanmoy (arif.tanmoy@chrfbd.org) and Yogesh Hooda (yhooda@chrfbd.org)
 #

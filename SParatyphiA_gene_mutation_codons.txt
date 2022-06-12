@@ -4,7 +4,7 @@
 #
 # Last modified - January 2, 2022
 #
-#position	strand	location	codon(wt)(for)	basepair	pos_in_codon	region
+#position	strand	location	codon(wt-forward)	basepair	position_in_codon	region
 gyrA-S83	for	669201	TCC	T	1	QRDR
 gyrA-S83	for	669202	TCC	C	2	QRDR
 gyrA-S83	for	669203	TCC	C	3	QRDR

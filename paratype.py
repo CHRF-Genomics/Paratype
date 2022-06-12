@@ -5,8 +5,8 @@ It uses FASTQ or BAM (recommended) or VCF (if highly trusted SNP data) files rel
 
 Authors: Arif Mohammad Tanmoy (arif.tanmoy@chrfbd.org) wrote the script. He and Yogesh Hooda (yhooda@chrfbd.org) defined the genotype-specific alleles.
 
-Last modified - 2nd January, 2022
-Version: v1_beta_3
+Last modified - 11 June, 2022
+Version: 1.0
 '''
 import os
 from argparse import ArgumentParser
@@ -16,15 +16,23 @@ from Bio.Seq import Seq
 def parse_args():
     "Parse the input arguments, use '-h' for help"
     commands = ArgumentParser(
-        description='Genotyping of Salmonella Paratyphi A using fastq or bam or vcf files, against the strain AKU_12601 as reference.')
+        description='Genotyping of Salmonella Paratyphi A using fastq or fasta or bam or vcf files, against the strain AKU_12601 as reference (v0.4 beta).')
+    commands.add_argument('--id', type=str, required=True,
+                          help='Sample ID')
     commands.add_argument('--mode', required=False, default='bam',
-                          help='Mode to run in based on input files (fastq or, bam or, vcf)')
+                          help='Mode to run in based on input files (fastq, fastq interleaved, bam, vcf, fasta, and nanopore). Default: bam')
     commands.add_argument('--fastq', nargs='+', required=False,
                           help='Raw fastq read files (paired-end).')
+    commands.add_argument('--fqin', type=str, required=False,
+                          help='Raw fastq read files (paired-end interleaved).')
     commands.add_argument('--bam', type=str, required=False,
                           help='Mapped BAM file against the AKU_12601 reference genome.')
     commands.add_argument('--vcf', type=str, required=False,
                           help='Mapped VCF file against the AKU_12601 reference genome.')
+    commands.add_argument('--fasta', type=str, required=False,
+                          help='Assembled fasta files (not recommended unless the contigs are highly trusted).')
+    commands.add_argument('--nano', type=str, required=False,
+                          help='Raw nanopore fastq read files.')
     commands.add_argument('--ref', type=str, required=False, default='SParatyphiAKU12601.fasta',
                           help='Fasta Reference sequence of AKU_12601 (default file is provided with the script)')
     commands.add_argument('--ref_id', type=str, required=False,	default='NC_011147.1',
@@ -34,7 +42,7 @@ def parse_args():
     commands.add_argument('--read_cutoff', type=float, required=False, default=0.75,
                           help='Minimum proportion of reads required to call a true allele (default: 0.75).')
     commands.add_argument('--threads', type=int, required=False, default=1,
-                          help='Number of threads to use for Bowtie2 mapping (only for "fastq" mode). (default: 1)')
+                          help='Number of threads to use for Bowtie2 or bwa mapping (only for "fastq" mode). (default: 1)')
     commands.add_argument('--allele', type=str, required=False,	default='SParatyphiA_genotype_specific_alleles.txt',
                           help='Allele definition in tab-delimited format (default file is provided with the script).')
     commands.add_argument('--genes', type=str, required=False,	default='SParatyphiA_gene_mutation_codons.txt',
@@ -45,6 +53,8 @@ def parse_args():
 
 
 args = parse_args()
+
+version = "1.0"
 
 # Define allele, gene region and reference files
 # Let's define a simple function to check and decide
@@ -252,12 +262,11 @@ def designate_genotypes(type_list, propr):
     return final_result, ratio
 
 # Define strain ID
-
-def generate_strain_id(string):
-    if "/" in str(string):
-        strainID = (str(string).split('/')[-1])[:-4]
+def generate_strainID(idd):
+    if idd !="":
+        strainID = idd
     else:
-        strainID = str(string)[:-4]
+        strainID = "Strain ID is missing. Please add."
     return strainID
 
 ########################
@@ -322,15 +331,50 @@ def classify_mutations(snp_pos, snp_alt, mutation, strand, location, codon, codo
         final_mut_list.append('No_mutation')
     return final_mut_list
 
-# THE DRIVER
 
+# Run Samtools And BCFtools
+
+def run_samtools(ref_fasta_file, phrd_cutoff, ref_id, threads, sam, bam, sorted_bam, vcf_file):
+    os.system(
+        ' '.join(['samtools view -ubS --threads', str(args.threads), sam, '>', bam]))
+    os.system(' '.join(['samtools sort --threads',
+                        str(args.threads), bam, '-o', sorted_bam]))
+    os.system(' '.join(['samtools index', sorted_bam]))
+    os.system(' '.join(['samtools mpileup -q', str(args.phrd_cutoff), '-ugBf', ref_fasta_file,
+                        '-l', str(args.ref_id + '.bed'), sorted_bam, '-I |', 'bcftools call -c', '-o', vcf_file]))
+
+    os.system('rm ' + sam + ' ' + bam + ' ' + sorted_bam + ' ' + sorted_bam + '.bai ' + args.ref_id + '.bed')
+    return print("Samtools and bcftools run completed")
+
+
+# THE DRIVER
 def main():
-    if args.ref and args.allele:
+    print("\nYou are using Paratype version " + version + '\n')
+    if args.ref and args.allele and args.id and args.genes:
+        # setup strain ID
+        strainID = generate_strainID(args.id)
+
         # setup the reference fasta file
         # index ref.fasta if not indexed
         if os.path.exists(ref_fasta_file + '.fai') == False:
             print('\nreference fasta file is not indexed. Indexing now ...\n')
             os.system(' '.join(['samtools faidx', ref_fasta_file]))
+
+        # set ref_index for bowtie2
+        # assuming the extension of reference file is 'fasta', not 'fa'. If it is 'fa', change the number -6 to -3.
+        ref_index = '_'.join([(ref_fasta_file[:-6]), 'index'])
+
+        # set up sam, bam, vcf files
+        sam = '.'.join([strainID, 'sam'])
+        bam = '.'.join([strainID, 'bam'])
+        sorted_bam = '.'.join([strainID, 'sorted.bam'])
+        vcf_file = '.'.join([strainID, 'vcf'])
+
+        # Setup output file
+        if args.output == 'paratype_results.txt':
+            outfile = open((strainID + '_' + args.output), 'w')
+        else:
+            outfile = open(args.output, 'w')
 
         # setup the lists
         clades, loci, alleles = define_genotypes(genotype_allele_file)
@@ -344,81 +388,85 @@ def main():
             fastq1 = args.fastq[0]
             fastq2 = args.fastq[1]
 
-            # set ref_index for bowtie2
-            # assuming the extension of reference file is 'fasta', not 'fa'. If it is 'fa', change the number -6 to -3.
-            ref_index = '_'.join([(ref_fasta_file[:-6]), 'index'])
-            os.system(' '.join(['bowtie2-build', ref_fasta_file, ref_index]))
+            # Build ref_index for bowtie2
+            os.system(' '.join(['bowtie2-build -q', ref_fasta_file, ref_index]))
 
-            # set up sam, bam, vcf files
-            # assuming the extension of fastq files are 'fastq.gz', not 'fq.gz'. If it is 'fq.gz', change the number -11 to -8.
-            sam = '.'.join([(fastq1[:-11]), 'sam'])
-            bam = '.'.join([(sam[:-4]), 'bam'])
-            sorted_bam = '.'.join([(bam[:-4]), 'sorted.bam'])
-            vcf_file = '.'.join([(bam[:-4]), 'vcf'])
-            # Define strain ID & Setup output file
-            strainID = generate_strain_id(bam)
-            if args.output == 'paratype_results.txt':
-                outfile = open((strainID+'_'+args.output), 'w')
-            else:
-                outfile = open(args.output, 'w')
-
-            # Run bowtie2, samtools view, sort, mpileup and bcftools call to generate vcf for a fixed number of loci
-            print("Bowtie2 mapping is starting....")
+            # Run bowtie2 for mapping
+            print("\nBowtie2 mapping is starting....\n")
             os.system(' '.join(['bowtie2 -x', ref_index, '-1', fastq1,
                                 '-2', fastq2, '-S', sam, '-p', str(args.threads)]))
-            os.system(
-                ' '.join(['samtools view -ubS --threads', str(args.threads), sam, '>', bam]))
-            print("Mapping is complete.")
+            print("\nMapping is complete.\n")
+
+            # Run samtools view, sort, mpileup and bcftools call to generate vcf for a fixed number of loci
+            run_samtools(ref_fasta_file, args.phrd_cutoff, args.ref_id, args.threads, sam, bam, sorted_bam, vcf_file)
+
+        # If mode is set to fastq_interleaved:
+        if args.mode == "fqin" and args.fqin:
+            fastq = args.fqin
+
+            # Build ref_index for bowtie2
+            os.system(' '.join(['bowtie2-build -q', ref_fasta_file, ref_index]))
+
+            # Run bowtie2 for mapping
+            print("\nBowtie2 mapping is starting....\n")
+            os.system(' '.join(['bowtie2 -x', ref_index, '--interleaved', fastq,
+                                '-S', sam, '-p', str(args.threads)]))
+            print("\nMapping is complete.\n")
+
+            # Run samtools view, sort, mpileup and bcftools call to generate vcf for a fixed number of loci
+            run_samtools(ref_fasta_file, args.phrd_cutoff, args.ref_id, args.threads, sam, bam, sorted_bam, vcf_file)
+
+        # If mode is set to nanopore fastq:
+        if args.mode == "nano" and args.nano:
+            fastq = args.nano
+
+            # Build ref_index for bwa
+            os.system(' '.join(['bwa index ', ref_fasta_file]))
+
+            # Run bwa mapping
+            print("\nbwa mapping is starting....\n")
+            os.system(' '.join(['bwa mem -t ', str(args.threads), ref_fasta_file, fastq, ' > ', sam]))
+            print("\nMapping is complete.\n")
+
+            # Run samtools view, sort, mpileup and bcftools call to generate vcf for a fixed number of loci
+            run_samtools(ref_fasta_file, args.phrd_cutoff, args.ref_id, args.threads, sam, bam, sorted_bam, vcf_file)
+
+        # If mode is set to fasta:
+        if args.mode == "fasta" and args.fasta:
+            fasta = args.fasta
+
+            # Build ref_index for bwa
+            os.system(' '.join(['bwa index ', ref_fasta_file]))
+
+            # Run bwa mem mapping
+            print("\nbwa mem mapping is starting....\n")
+            os.system(' '.join(['bwa mem -t ', str(args.threads), ref_fasta_file, fasta, ' > ', sam]))
+            print("\nMapping is complete.\n")
+
+            # Run samtools view, sort, mpileup and bcftools call to generate vcf for a fixed number of loci
+            run_samtools(ref_fasta_file, args.phrd_cutoff, args.ref_id, args.threads, sam, bam, sorted_bam, vcf_file)
+
+        # If mode is set to bam:
+        elif args.mode == "bam" and args.bam:
+            # setup bam file
+            bam = args.bam
+
+            # Run samtools mpileup and bcftools call to generate vcf for a fixed number of loci
+            print("\nSamtools mpilieup is running....\n")
             os.system(' '.join(['samtools sort --threads',
                                 str(args.threads), bam, '-o', sorted_bam]))
             os.system(' '.join(['samtools index', sorted_bam]))
             os.system(' '.join(['samtools mpileup -q', str(args.phrd_cutoff), '-ugBf', ref_fasta_file,
-                                '-l', str(args.ref_id + '.bed'), sorted_bam, '-I |', 'bcftools call -c', '-o', vcf_file]))
+                                '-l', str(args.ref_id + '.bed'), sorted_bam, '-I |', 'bcftools call -c', '-o',
+                                vcf_file]))
 
-            os.system('rm '+sam+' '+bam+' '+sorted_bam+' '+args.ref_id+'.bed')
-
-        # If mode is set to bam:
-        elif args.mode == "bam" and args.bam:
-            bam = args.bam
-            sorted_bam = '.'.join([(bam[:-4]), 'sorted.bam'])
-            # final vcf file to work with
-            vcf_file = '.'.join([(bam[:-4]), 'vcf'])
-
-            # Define strain ID & Setup output file
-            strainID = generate_strain_id(bam)
-            if args.output == 'paratype_results.txt':
-                outfile = open((strainID+'_'+args.output), 'w')
-            else:
-                outfile = open(args.output, 'w')
-
-            # setup bam file
-            # index bam if indexed bam doesn't exist
-            if os.path.exists(bam + '.bai') == False:
-                print('\n.bam file is not indexed. Indexing now ...\n')
-                os.system(' '.join(['samtools index', bam]))
-            else:
-                print('\n.bam file is indexed. Thank you.\n')
-
-            # Run samtools mpileup and bcftools call to generate vcf for a fixed number of loci
-            os.system(' '.join(
-                ['samtools mpileup -q', str(args.phrd_cutoff), '-ugBf', ref_fasta_file, '-l', str(args.ref_id+'.bed'), bam, '-I |',
-                 'bcftools call -c', '-o', vcf_file]))
-
-            os.system('rm '+args.ref_id+'.bed')
+            os.system('rm ' + sorted_bam + ' ' + sorted_bam + '.bai ' + args.ref_id + '.bed')
 
         # If mode is set to vcf:
         elif args.mode == "vcf" and args.vcf:
-            vcf = args.vcf
-
-            # Define strain ID & Setup output file
-            strainID = generate_strain_id(vcf)
-            if args.output == 'paratype_results.txt':
-                outfile = open((strainID+'_'+args.output), 'w')
-            else:
-                outfile = open(args.output, 'w')
-
-            # final vcf file to work with
-            vcf_file = vcf[:-4] + '.vcf'
+            vcf_file = args.vcf
+            
+            os.system('rm ' + args.ref_id + '.bed')
 
         # detect type/ clade list from vcf file
         type_list, propor = check_allele_from_vcf(
@@ -435,13 +483,17 @@ def main():
             snp, nucl, mutation, strand, location, codon, codon_pos)
         print_mutations = ','.join(mutation_list)
         print(strainID + '\t' + str(type_list) + '\t' + print_mutations)
-
+        
+        if args.mode != "vcf":
+            os.system('rm ' + vcf_file)
+		
         # print results
         outfile.write('Strain\tPrimary_clade\tSecondary_clade\tSubclade\tGenotype\tSupport\tMutations\n' +
                       strainID + '\t' + final_result + '\t' + avg_ratio + '\t' + print_mutations + '\n')
 
     else:
         print('Please check if you have provided right allele file and reference fasta.')
+    print("Thank you for using Paratype.")
 
 
 # call main function
