@@ -198,7 +198,7 @@ Requires [bwa](http://bio-bwa.sourceforge.net/), [SAMtools](http://samtools.sour
   --output OUTPUT       output file.
 ```
 #
-###Batch mode
+### Batch mode
 Paratype does not have a batch mode yet. However, a bash script is added here that can be used to run multiple isolate data. All input files need to be in one folder. 
 ```
 bash Batch_run_paratype.sh <Input file directory> <Results directory> <Paratype directory>
