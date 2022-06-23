@@ -16,7 +16,7 @@ from Bio.Seq import Seq
 def parse_args():
     "Parse the input arguments, use '-h' for help"
     commands = ArgumentParser(
-        description='Genotyping of Salmonella Paratyphi A using fastq or fasta or bam or vcf files, against the strain AKU_12601 as reference (v0.4 beta).')
+        description='Genotyping of Salmonella Paratyphi A using fastq or fasta or bam or vcf files, against the strain AKU_12601 as reference.')
     commands.add_argument('--id', type=str, required=True,
                           help='Sample ID')
     commands.add_argument('--mode', required=False, default='bam',
