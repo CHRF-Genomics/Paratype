@@ -7,7 +7,7 @@
 This script is a beta version of the **paratype** tool that assigns genotypes to *Salmonella* Paratyphi A genomes. It is written in _**python3**_. 
 **Paratype** also detects mutations in the quinolone resistance-determining regions (_gyrA_-83, _gyrA_-87, _parC_-80, _parC_-84) responsible for resistance to ciprofloxacin and _acrB_ gene (_acrB_-717) which can cause azithromycin resistance in _Salmonella_ Typhi and Paratyphi ([Hooda Y et al. 2019](https://doi.org/10.1371/journal.pntd.0007868), [Sajib MSI et al. 2021](https://doi.org/10.1128/mBio.03481-20)).
 
-[Tanmoy AM et al.](https://doi.org/10.1101/2021.11.13.21266165) _(on medRxiv)_ described the design of the **Paratype** genotyping scheme. 
+[Tanmoy AM et al. 2022](https://doi.org/10.1038/s41467-022-35587-6) described the design of the **Paratype** genotyping scheme. 
 Inspiration to design such a scheme came from [genotyphi](https://github.com/katholt/genotyphi), a tool that has been used for genotyping of a related serovar, _Salmonella_ Typhi.
 
 ### Dependencies
@@ -206,7 +206,7 @@ bash Batch_run_paratype.sh <Input file directory> <Results directory> <Paratype 
 The script has commands for all six different modes. Please unmute the mode you want to run. By default, the **_bam_** mode is unmuted in the script. 
 
 ### Citation
-If you use this tool or the scheme, please cite the preprint version of the **paratype** article ([Tanmoy AM et al.](https://doi.org/10.1101/2021.11.13.21266165)).
+If you use this tool or the scheme, please cite the **paratype** article on _Nature Commnications_([Tanmoy AM et al.](https://doi.org/10.1038/s41467-022-35587-6)).
 
 
 ### Python 2.7 version
