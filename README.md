@@ -4,7 +4,7 @@
 **Assigns genotypes to _Salmonella_ Paratyphi A isolates using whole-genome sequencing data.**
 
 ### Introduction
-This script is a beta version of the **paratype** tool that assigns genotypes to *Salmonella* Paratyphi A genomes. It is written in _**python3**_. 
+**Paratype** tool is designed to assign genotypes to *Salmonella* Paratyphi A genomes. It is written in _**python3**_. 
 **Paratype** also detects mutations in the quinolone resistance-determining regions (_gyrA_-83, _gyrA_-87, _parC_-80, _parC_-84) responsible for resistance to ciprofloxacin and _acrB_ gene (_acrB_-717) which can cause azithromycin resistance in _Salmonella_ Typhi and Paratyphi ([Hooda Y et al. 2019](https://doi.org/10.1371/journal.pntd.0007868), [Sajib MSI et al. 2021](https://doi.org/10.1128/mBio.03481-20)).
 
 [Tanmoy AM et al. 2022](https://doi.org/10.1038/s41467-022-35587-6) described the design of the **Paratype** genotyping scheme. 
