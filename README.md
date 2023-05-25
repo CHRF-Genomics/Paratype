@@ -3,15 +3,24 @@
 # Paratype
 **Assigns genotypes to _Salmonella_ Paratyphi A isolates using whole-genome sequencing data.**
 
-### Introduction
+## Introduction
 **Paratype** tool is designed to assign genotypes to *Salmonella* Paratyphi A genomes. It is written in _**python3**_. 
 **Paratype** also detects mutations in the quinolone resistance-determining regions (_gyrA_-83, _gyrA_-87, _parC_-80, _parC_-84) responsible for resistance to ciprofloxacin and _acrB_ gene (_acrB_-717) which can cause azithromycin resistance in _Salmonella_ Typhi and Paratyphi ([Hooda Y et al. 2019](https://doi.org/10.1371/journal.pntd.0007868), [Sajib MSI et al. 2021](https://doi.org/10.1128/mBio.03481-20)).
 
 [Tanmoy AM et al. 2022](https://doi.org/10.1038/s41467-022-35587-6) described the design of the **Paratype** genotyping scheme. 
 Inspiration to design such a scheme came from [genotyphi](https://github.com/katholt/genotyphi), a tool that has been used for genotyping of a related serovar, _Salmonella_ Typhi.
 
-### Dependencies
-Dependencies are listed below *(tested versions are in the parentheses)*
+### Update in recent version (_v1.1_)
+**_a)_** Genotype definitions have been updated in version _1.1_. **Six (6) new different genotypes, _(2.3.4 and 2.4.5 - 2.4.9)_** were identified using genomic data described by [Jacob JJ et al.](https://doi.org/10.1371/journal.ppat.1010650) from India. Allele definitions for these new genotypes have been added to the [_genotype_specific_allele_](https://github.com/CHRF-Genomics/Paratype/blob/main/SParatyphiA_genotype_specific_alleles.txt) file. 
+We also checked the WGS data published by [Rahman S et al. 2021](https://doi.org/10.1371/journal.pntd.0009748) (Bangladesh), [Dyson ZA et al 2022](https://doi.org/10.1101/2023.03.11.23286741) (Bangladesh, Nepal, and Malawi), [Dusadeepong R et al 2023](https://doi.org/10.1099/mgen.0.000972) (Cambodia), and [Kuijpers LAF et al 2017](https://doi.org/10.1371/journal.pntd.0005964) (Cambodia). No new genotypes were identified there. 
+
+**_b)_** To facilitate **Paratype** run with a large number of samples, we have updated the `Batch_run_paratype.sh` bash script with detailed options.
+
+**_c)_** The **Paratype** script now has an additional option of `--mapq_cutoff` to control the _Mapping_Quality_ of the allele positions. This quality score is presented as a Phred score in VCF file. The default has been set to 20 which refers to 99.9% accuracy. 
+
+
+## Dependencies
+Dependencies are listed below *(tested versions are in parentheses)*
 1. [Python3](https://www.python.org/) (_v3.8.10_)
 2. [Biopython](https://biopython.org/wiki/Download) (_v1.79_)
 3. [Samtools](https://github.com/samtools/samtools) (_v1.10_ & v1.13)
@@ -25,7 +34,7 @@ Dependencies are listed below *(tested versions are in the parentheses)*
 **Note:** Paratype assumes that all dependencies are already installed in the system, at their default location. User may notice a few warning messages from samtools mpileup (_for options - u, g and I_). Please ignore those messages.
 
 
-### Input files
+## Input files
 Currently, **Paratype** has **six** working modes with **four** different file types: FASTQ, BAM, VCF and FASTA.
 It can run with _fastq_ files from both **Illumina** and **Nanopore** platforms.Use of different modes are as follows _(you can use any of them)_:
 ```
@@ -71,8 +80,8 @@ However, if you found a new genotype or want to detect a new mutation, you can e
 ```
 However, if you add a new genotype to the provided allele_definition file or, make a new one, please follow the numbered_nomenclature we followed here. For example, you can use N.N.N format (e.g. 2.4.1), but not N.N.TEXT format (e.g. 2.4.Ab). _(Otherwise, the script will show errors)_.
 
-### Usage
-Paratype assumes that **python3** is the default **_python_** in your system. If it is not, you should use _python3_ instead of _python_ in the following commands.
+## Usage
+Paratype assumes that **python3** is the default **_python_** in your system. If it is not, you should use **_python3_** instead of **_python_** in the following commands.
 
 Provide the sample name or ID using _--id_ option _(mandatory)_. Paratype will use this to name all necessary files. 
 
@@ -112,8 +121,8 @@ python paratype.py --id Sample --mode vcf --vcf Sample.vcf --output Sample_parat
 ### Options and details
 
 ```
-usage: paratype.py [-h] --id ID [--mode MODE] [--fastq FASTQ [FASTQ ...]] [--fqin FQIN] [--bam BAM] [--vcf VCF] [--fasta FASTA] [--nano NANO] [--ref REF] [--ref_id REF_ID] [--phrd_cutoff PHRD_CUTOFF]
-                   [--read_cutoff READ_CUTOFF] [--threads THREADS] [--allele ALLELE] [--genes GENES] [--output OUTPUT]
+usage: paratype.py [-h] --id ID [--mode MODE] [--fastq FASTQ [FASTQ ...]] [--fqin FQIN] [--bam BAM] [--vcf VCF] [--fasta FASTA] [--nano NANO] [--ref REF] [--ref_id REF_ID] [--mapq_cutoff PHRD_CUTOFF]
+                   [--phrd_cutoff PHRD_CUTOFF] [--read_cutoff READ_CUTOFF] [--threads THREADS] [--allele ALLELE] [--genes GENES] [--output OUTPUT]
 
 Genotyping of Salmonella Paratyphi A using fastq or fasta or bam or vcf files, against the strain AKU_12601 as reference.
 
@@ -130,11 +139,13 @@ optional arguments:
   --nano NANO           Raw nanopore fastq read files.
   --ref REF             Fasta Reference sequence of AKU_12601 (default file is provided with the script)
   --ref_id REF_ID       Reference sequence id (default: NC_011147.1).
+  --mapq_cutoff MAPQ_CUTOFF
+                        Minimum mapping quality (by phred score) to consider a variant call as a true allele (default: 20).
   --phrd_cutoff PHRD_CUTOFF
-                        Minimum phred quality score to consider a variant call as a true allele (default: 20).
+                        Minimum base quality (by phred score) to consider a variant call as a true allele (default: 20).
   --read_cutoff READ_CUTOFF
                         Minimum proportion of reads required to call a true allele (default: 0.75).
-  --threads THREADS     Number of threads to use for Bowtie2 or bwa mapping (only for "fastq" mode). (default: 1)
+  --threads THREADS     Number of threads to use for mapping and variant calling. (default: 1)
   --allele ALLELE       Allele definition in tab-delimited format (default file is provided with the script).
   --genes GENES         List of codons to find targeted gene mutation (tab-delimited format; default file is provided with the script).
   --output OUTPUT       output file.
@@ -188,26 +199,95 @@ Requires [bwa](http://bio-bwa.sourceforge.net/), [SAMtools](http://samtools.sour
 ```
   --ref REF             Fasta Reference sequence of AKU_12601 (default file is provided with the script)
   --ref_id REF_ID       Reference sequence id (default: NC_011147.1).
+  --mapq_cutoff MAPQ_CUTOFF
+                        Minimum mapping quality (by phred score) to consider a variant call as a true allele (default: 20).
   --phrd_cutoff PHRD_CUTOFF
-                        Minimum phred quality score to consider a variant call as a true allele (default: 20).
+                        Minimum base quality (by phred score) to consider a variant call as a true allele (default: 20).
   --read_cutoff READ_CUTOFF
                         Minimum proportion of reads required to call a true allele (default: 0.75).
-  --threads THREADS     Number of threads to use for Bowtie2 mapping (only for "fastq" mode). (default: 1)
+  --threads THREADS     Number of threads to use for mapping and variant calling. (default: 1).
   --allele ALLELE       Allele definition in tab-delimited format (default file is provided with the script).
   --genes GENES         List of codons to find targeted gene mutation (tab-delimited format; default file is provided with the script).
   --output OUTPUT       output file.
 ```
-#
-### Batch mode
-Paratype does not have a batch mode yet. However, a bash script is added here that can be used to run multiple isolate data. All input files need to be in one folder. 
+
+## Batch mode
+**Paratype** does not have a batch mode. However, **Batch_run_paratype.sh** script is added here that can be used to run data of multiple isolates. All input files need to be in one folder. 
+
+### Options
 ```
-bash Batch_run_paratype.sh <Input file directory> <Results directory> <Paratype directory>
+# Batch_run_paratype.sh
+# USAGE: bash Batch_run_paratype.sh -i Input_directory | -o Result_directory |-p Paratype_directory | -m Run_mode
+
+Mandatory Arguments:
+-i, --input           Directory of Input files. 
+-o, --output          Directory of Result files. 
+-p, --paratype        Paratype directory. 
+-m, --mode            Running modes: fasta, fastq, fqin, bam, nano, vcf. The type of your input files.  
+
+Optional Arguments:
+-t, --threads         Number of threads to run Paratype
+
+Other Arguments:
+-h, --help 	      Print the usage message
 ```
-The script has commands for all six different modes. Please unmute the mode you want to run. By default, the **_bam_** mode is unmuted in the script. 
+### Mandatory Arguments
+#### _-i, --input_ location_of_input_data_folder
+```
+    Example -
+    Folder: /home/user/Fastq_for_Paratype/
+    command:    bash Batch_run_paratype.sh -i /home/user/Fastq_for_Paratype/
+```
+#### _-o, --output_ location_of_results_folder
+If the results folder is not present, the script will create it. 
+```
+    Example -
+    Folder: /home/user/Paratype_result/
+    command:    bash Batch_run_paratype.sh -o /home/user/Paratype_result/
+```
+#### _-p, --paratype_ location_of_paratype_folder
+```
+    Example - 
+    Paratype Folder: /home/user/Paratype/
+    command:    bash Batch_run_paratype.sh -p /home/user/Paratype/
+```
+#### _-m, --mode_ Running_mode_based_on_input_file_type
+**Paraype** accepts six different file modes: fasta, fastq, fqin, bam, nano, and vcf. Details of each file type is described the the [**Input files**](https://github.com/CHRF-Genomics/Paratype#input-files) section. 
+```
+    Example -
+    Input File type: fastq (Illumina ) 
+    command:    bash Batch_run_paratype.sh -m fastq
+
+    Input File type: fastq interleaved
+    command:    bash Batch_run_paratype.sh -m fqin
+
+    Input File type: fastq (Nanopore)
+    command:    bash Batch_run_paratype.sh -m nano
+
+    Input File type: bam 
+    command:    bash Batch_run_paratype.sh -m bam
+
+    Input File type: fasta
+    command:    bash Batch_run_paratype.sh -m fasta
+
+    Input File type: vcf
+    command:    bash Batch_run_paratype.sh -m vcf
+```
+
+Please note, fastq mode with this script only accepts the *SAMPLE_1.fastq.gz SAMPLE_2.fastq.gz* and *SAMPLE_1.fq.gz SAMPLE_2.fq.gz* format. 
+
+### Optional Arguments
+#### _-t, --threads_ Number_of_threads_for_Paratype
+```
+    Example -
+    Number of threads to use for Paratype run: 8
+    command: bash Batch_run_paratype.sh -t 8
+```
 
 ### Citation
-If you use this tool or the scheme, please cite the **paratype** article on _Nature Commnications_([Tanmoy AM et al.](https://doi.org/10.1038/s41467-022-35587-6)).
+If you use this tool or the scheme, please cite the **Paratype** article on _Nature Commnications_ ([Tanmoy AM et al. 2022](https://doi.org/10.1038/s41467-022-35587-6)).
 
 
-### Python 2.7 version
-Paratype is no longer maintained on python2.7. Please download the original codes (release: *Original paratype codes, v1_beta*), if you have no other option than working with python2.7. 
+## Python 2.7 version
+**Paratype** is no longer maintained on _**python2.7**_. Please download the original codes (release: *[Original paratype codes, v1_beta](https://github.com/CHRF-Genomics/Paratype/releases/tag/v1_beta)*), if you have no other option than working with _**python2.7**_. Replace the genotype and mutation definition files there with the current ones. The script should still work. In case of failure, please let us know.  
+

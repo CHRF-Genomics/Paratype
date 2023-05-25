@@ -1,8 +1,7 @@
-# List of clade-specific alleles relative to the Salmonella Paratyphi A AKU12601 genome
-#
+# List of clade-specific alleles relative to the S. Paratyphi A AKU12601 genome 
+# version - 2.0
 # Authors - Arif Mohammad Tanmoy (arif.tanmoy@chrfbd.org) and Yogesh Hooda (yhooda@chrfbd.org)
-#
-# Last modified - February 7th, 2021
+# Last modified - 25 May, 2023
 #
 0.1	553085	T	SSPA_RS02400
 1.0	2073394	T	SSPA_RS10025
@@ -19,7 +18,13 @@
 2.3.1	3437895	A	SSPA_RS16940
 2.3.2	103259	T	SSPA_RS00455
 2.3.3	2419603	G	SSPA_RS11685
+2.3.4	2079138	A	SSPA_RS10050
 2.4.1	1881695	A	SSPA_RS09100
 2.4.2	861876	A	SSPA_RS03840
 2.4.3	320372	A	SSPA_RS01410
 2.4.4	1178060	T	SSPA_RS05545
+2.4.5	2926426	G	SSPA_RS14330
+2.4.6	2905926	A	SSPA_RS14250
+2.4.7	3819917	T	SSPA_RS18650
+2.4.8	2619703	A	SSPA_RS12755
+2.4.9	1710678	A	SSPA_RS08250

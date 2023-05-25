@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 '''
 This script assigns genotypes to Salmonella Paratyphi A isolates using whole-genome sequencing data.
-It uses FASTQ or BAM (recommended) or VCF (if highly trusted SNP data) files relative to Paratyphi A AKU_12601 (NC_011147.1). Also, it reads allele definitions of the genotypes from a text file (given with this script).
+It uses FASTQ or BAM (recommended) or VCF (if highly trusted SNP data) or FASTA (assembled contigs) files relative to Paratyphi A AKU_12601 (NC_011147.1). Also, it reads allele definitions of the genotypes from a text file (given with this script).
 
 Authors: Arif Mohammad Tanmoy (arif.tanmoy@chrfbd.org) wrote the script. He and Yogesh Hooda (yhooda@chrfbd.org) defined the genotype-specific alleles.
 
-Last modified - 11 June, 2022
-Version: 1.0
+Last modified - 25 May, 2023
+Version: 1.1
 '''
 import os
 from argparse import ArgumentParser
@@ -37,12 +37,14 @@ def parse_args():
                           help='Fasta Reference sequence of AKU_12601 (default file is provided with the script)')
     commands.add_argument('--ref_id', type=str, required=False,	default='NC_011147.1',
                           help='Reference sequence id (default: NC_011147.1).')
+    commands.add_argument('--mapq_cutoff', type=float, required=False, default=20,
+                          help='Minimum mapping quality (by phred score) to consider a variant call as a true allele (default: 20).')
     commands.add_argument('--phrd_cutoff', type=float, required=False, default=20,
-                          help='Minimum phred quality score to consider a variant call as a true allele (default: 20).')
+                          help='Minimum base quality (by phred score) to consider a variant call as a true allele (default: 20).')
     commands.add_argument('--read_cutoff', type=float, required=False, default=0.75,
                           help='Minimum proportion of reads required to call a true allele (default: 0.75).')
     commands.add_argument('--threads', type=int, required=False, default=1,
-                          help='Number of threads to use for Bowtie2 or bwa mapping (only for "fastq" mode). (default: 1)')
+                          help='Number of threads to use for mapping and variant calling. (default: 1).')
     commands.add_argument('--allele', type=str, required=False,	default='SParatyphiA_genotype_specific_alleles.txt',
                           help='Allele definition in tab-delimited format (default file is provided with the script).')
     commands.add_argument('--genes', type=str, required=False,	default='SParatyphiA_gene_mutation_codons.txt',
@@ -54,7 +56,7 @@ def parse_args():
 
 args = parse_args()
 
-version = "1.0"
+version = "1.1"
 
 # Define allele, gene region and reference files
 # Let's define a simple function to check and decide
@@ -334,14 +336,14 @@ def classify_mutations(snp_pos, snp_alt, mutation, strand, location, codon, codo
 
 # Run Samtools And BCFtools
 
-def run_samtools(ref_fasta_file, phrd_cutoff, ref_id, threads, sam, bam, sorted_bam, vcf_file):
+def run_samtools(ref_fasta_file, mapq_cutoff, ref_id, threads, sam, bam, sorted_bam, vcf_file):
     os.system(
         ' '.join(['samtools view -ubS --threads', str(args.threads), sam, '>', bam]))
     os.system(' '.join(['samtools sort --threads',
                         str(args.threads), bam, '-o', sorted_bam]))
     os.system(' '.join(['samtools index', sorted_bam]))
-    os.system(' '.join(['samtools mpileup -q', str(args.phrd_cutoff), '-ugBf', ref_fasta_file,
-                        '-l', str(args.ref_id + '.bed'), sorted_bam, '-I |', 'bcftools call -c', '-o', vcf_file]))
+    os.system(' '.join(['samtools mpileup -q', str(args.mapq_cutoff), '-uBf', ref_fasta_file,
+                        '-l', str(args.ref_id + '.bed'), sorted_bam, ' |', 'bcftools call -c', '-o', vcf_file]))
 
     os.system('rm ' + sam + ' ' + bam + ' ' + sorted_bam + ' ' + sorted_bam + '.bai ' + args.ref_id + '.bed')
     return print("Samtools and bcftools run completed")
@@ -398,7 +400,7 @@ def main():
             print("\nMapping is complete.\n")
 
             # Run samtools view, sort, mpileup and bcftools call to generate vcf for a fixed number of loci
-            run_samtools(ref_fasta_file, args.phrd_cutoff, args.ref_id, args.threads, sam, bam, sorted_bam, vcf_file)
+            run_samtools(ref_fasta_file, args.mapq_cutoff, args.ref_id, args.threads, sam, bam, sorted_bam, vcf_file)
 
         # If mode is set to fastq_interleaved:
         if args.mode == "fqin" and args.fqin:
@@ -414,7 +416,7 @@ def main():
             print("\nMapping is complete.\n")
 
             # Run samtools view, sort, mpileup and bcftools call to generate vcf for a fixed number of loci
-            run_samtools(ref_fasta_file, args.phrd_cutoff, args.ref_id, args.threads, sam, bam, sorted_bam, vcf_file)
+            run_samtools(ref_fasta_file, args.mapq_cutoff, args.ref_id, args.threads, sam, bam, sorted_bam, vcf_file)
 
         # If mode is set to nanopore fastq:
         if args.mode == "nano" and args.nano:
@@ -429,7 +431,7 @@ def main():
             print("\nMapping is complete.\n")
 
             # Run samtools view, sort, mpileup and bcftools call to generate vcf for a fixed number of loci
-            run_samtools(ref_fasta_file, args.phrd_cutoff, args.ref_id, args.threads, sam, bam, sorted_bam, vcf_file)
+            run_samtools(ref_fasta_file, args.mapq_cutoff, args.ref_id, args.threads, sam, bam, sorted_bam, vcf_file)
 
         # If mode is set to fasta:
         if args.mode == "fasta" and args.fasta:
@@ -444,7 +446,7 @@ def main():
             print("\nMapping is complete.\n")
 
             # Run samtools view, sort, mpileup and bcftools call to generate vcf for a fixed number of loci
-            run_samtools(ref_fasta_file, args.phrd_cutoff, args.ref_id, args.threads, sam, bam, sorted_bam, vcf_file)
+            run_samtools(ref_fasta_file, args.mapq_cutoff, args.ref_id, args.threads, sam, bam, sorted_bam, vcf_file)
 
         # If mode is set to bam:
         elif args.mode == "bam" and args.bam:
@@ -456,7 +458,7 @@ def main():
             os.system(' '.join(['samtools sort --threads',
                                 str(args.threads), bam, '-o', sorted_bam]))
             os.system(' '.join(['samtools index', sorted_bam]))
-            os.system(' '.join(['samtools mpileup -q', str(args.phrd_cutoff), '-ugBf', ref_fasta_file,
+            os.system(' '.join(['samtools mpileup -q', str(args.mapq_cutoff), '-ugBf', ref_fasta_file,
                                 '-l', str(args.ref_id + '.bed'), sorted_bam, '-I |', 'bcftools call -c', '-o',
                                 vcf_file]))
 
