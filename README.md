@@ -16,7 +16,7 @@ We also checked the WGS data published by [Rahman S et al. 2021](https://doi.org
 
 **_b)_** To facilitate **Paratype** run with a large number of samples, we have updated the `Batch_run_paratype.sh` bash script with detailed options.
 
-**_c)_** The **Paratype** script now has an additional option of `--mapq_cutoff` to control the _Mapping_Quality_ of the allele positions. This quality score is presented as a Phred score in VCF file. The default has been set to 20 which refers to 99.9% accuracy. 
+**_c)_** The **Paratype** script now has an additional option of `--mapq_cutoff` to control the _Mapping_Quality_ of the allele positions. This quality score is presented as a Phred score in VCF file. The default has been set to 20 which refers to 99% accuracy. 
 
 
 ## Dependencies
@@ -32,6 +32,57 @@ Dependencies are listed below *(tested versions are in parentheses)*
 (Both modules should be present by default. If not, install it using _"pip install modulename"_. Use _"sudo pip install modulename"_ if you require administrative access for installation.)
 
 **Note:** Paratype assumes that all dependencies are already installed in the system, at their default location. User may notice a few warning messages from samtools mpileup (_for options - u, g and I_). Please ignore those messages.
+
+## Setting up using Conda
+To avoid conflicts with dependent programs and their versions, you can set up a Conda environment and run Parataype from there. Details are as follows:
+
+Create an environment and activate
+```
+conda create --name paratype -y
+conda activate paratype
+```
+Install the required programs
+```
+conda install -y -c conda-forge -c bioconda samtools=1.13 bcftools=1.13 bowtie2=2.3.5.1 bwa=0.7.17
+```
+Install the python modules
+```
+pip install biopython argparse
+```
+Clone the Paratype git
+```
+cd $HOME
+git clone https://github.com/CHRF-Genomics/Paratype.git
+```
+You can export this Paratype directory (in a variable, e.g. _Parapath_) **permanently** to your system (~/.bashrc), or you can create a **temporary** variable with the directory path. The **temporary** variable is only usable in the ongoing/current session. Ultimately, both options will help you to access and run Paratype from any folder in your system.
+
+**The permanent way**
+```
+echo 'export Parapath="$HOME/Paratype/"' >> ~/.bashrc
+```
+Or,
+
+**The temporary way**
+```
+cd $HOME/Paratype
+Parapath=$(pwd)
+cd
+```
+
+**Run Paratype**
+
+Activate the environment
+```
+conda activate paratype
+```
+Checking out the help page of Paratype
+```
+python $Parapath/paratype.py -h	
+```
+Checking out the help page of Batch_run_paratype script
+```
+bash $Parapath/Batch_run_paratype.sh -h
+```
 
 
 ## Input files
