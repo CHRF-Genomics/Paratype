@@ -12,7 +12,7 @@ Inspiration to design such a scheme came from [genotyphi](https://github.com/kat
 
 ### Update in recent version (_v1.1_)
 **_a)_** Genotype definitions have been updated in version _1.1_. **Six (6) new different genotypes, _(2.3.4 and 2.4.5 - 2.4.9)_** were identified using genomic data described by [Jacob JJ et al.](https://doi.org/10.1371/journal.ppat.1010650) from India. Allele definitions for these new genotypes have been added to the [_genotype_specific_allele_](https://github.com/CHRF-Genomics/Paratype/blob/main/SParatyphiA_genotype_specific_alleles.txt) file. 
-We also checked the WGS data published by [Rahman S et al. 2021](https://doi.org/10.1371/journal.pntd.0009748) (Bangladesh), [Dyson ZA et al 2022](https://doi.org/10.1101/2023.03.11.23286741) (Bangladesh, Nepal, and Malawi), [Dusadeepong R et al 2023](https://doi.org/10.1099/mgen.0.000972) (Cambodia), and [Kuijpers LAF et al 2017](https://doi.org/10.1371/journal.pntd.0005964) (Cambodia). No new genotypes were identified there. 
+We also checked the WGS data published by [Kuijpers LAF et al 2017](https://doi.org/10.1371/journal.pntd.0005964) (Cambodia), [Rahman S et al. 2021](https://doi.org/10.1371/journal.pntd.0009748) (Bangladesh), [Dyson ZA et al 2022](https://doi.org/10.1101/2023.03.11.23286741) (Bangladesh, Nepal, and Malawi), [Dusadeepong R et al 2023](https://doi.org/10.1099/mgen.0.000972) (Cambodia), and [Pereira-Dias J et al 2023](https://www.microbiologyresearch.org/content/journal/mgen/10.1099/mgen.0.000914) (India). No new genotypes were identified there. 
 
 **_b)_** To facilitate **Paratype** run with a large number of samples, we have updated the `Batch_run_paratype.sh` bash script with detailed options.
 
